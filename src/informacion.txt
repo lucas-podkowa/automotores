@@ -1,0 +1,67 @@
+
+// src: viene del ingles source = fuente de informacion
+
+cada vez que alguien en la pantalla de su compu (en su navegador) quiera hacer algo con vehiculos
+que mi sitema se oriente y vaya a la parte de la gestion de dichos vehiculos
+
+
+
+    MODELS: son aquellos archivos encargados de conectarse con mysql
+            sentencias SQL para 
+                listar los vehiculos disponibles
+                crear un nuevo vehiculo
+                actualizar un vehiculo (cambiar el kilometraje)
+                eliminar un vehiculo
+    
+    ----------------------------------------------------------------
+
+    CONTROLLERS: son aquellos archivos que se encargan de recibir las peticiones de los usuarios
+        listar los vehiculos disponibles
+        crear un nuevo vehiculo
+        actualizar un vehiculo (cambiar el kilometraje)
+        eliminar un vehiculo
+    
+    
+    
+    raiz (donde empieza todo) [index.js]
+        -> SU FUNCION: levantar un servidor (requiere un express)
+        -> cuando alquien me hace una peticion tengo que delegarle a alguien que lo gestione
+            |--> tomá controlador (controller) aca te mando una peticion [vehiculoController.js]
+                    |
+                    |-->Controlador: recibira la peticion, la procesará y devolvera un resultado
+                        para procesar quizas requiera conectase a una base de datos
+                        significa delegarle el pedido a alguien que conozca a mysql (model)
+                            |   |                         
+                            |   |--> Modelo: se encarga de ocnectar con la base de
+                            |        datos y ejecutar las sentencias SQL y devolverle al 
+                            |        controlador lo que este le encarga
+                            |
+                            | --> y devolvera un resultado al frontend
+
+ index / app conoce a los controllers y los controllers conocen a los models
+
+ //----------------------------------------------------------------
+ 
+HABLANDO YERBAS SOBRE TRABAJOS O LABORES DE UN DESARROLLADOR
+ 
+//un cliente tiene unas maquinas de corte laser que requieren un archivo en formato archivo.corten
+//la idea es transformar archivos de tipo .cortenj a .json y esto lo mandas a una base de datos en monogDB
+
+// --->  [ logica necesaria] --> BD
+
+// llegan datos en formato txt, debemos tranformar eso en XML para enviarlo a otro servidor
+// ---> [ logica necesaria] --> enviar a alguna URL
+
+// funcionalidad de esa pagina web para el pago online con criptos
+// recibir peticiones (JSON) --> procesar --> requiere pegarle a alguna API de un banco --> devolver un ACEPTADO o RECHZADO
+
+//derivar las peticiones a sus distintos controladores
+//uso el concepto de middleware, es decir, atrapar la petinicion y procesara
+
+// FULLSTACK --> aprender las herramientas y mecanismos necesarios en cierta tecnologia (stack) para fabricar RESTApis
+// es decir, aplicaciones que tienen un frontEnd para interactuar y un BackEnd para responder a ese Front
+// UX / UI
+
+                
+   
+

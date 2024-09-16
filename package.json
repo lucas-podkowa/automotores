@@ -1,0 +1,28 @@
+{
+  "name": "automotores",
+  "version": "0.0.1",
+  "description": "sistema de reserva de vehiculos para una institucion",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucas-podkowa/automotores.git"
+  },
+  "keywords": [
+    "autos",
+    "reservas",
+    "personas"
+  ],
+  "author": "Facilitador Full-Stack",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucas-podkowa/automotores/issues"
+  },
+  "homepage": "https://github.com/lucas-podkowa/automotores#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0"
+  }
+}

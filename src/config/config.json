@@ -1,0 +1,11 @@
+{
+    "database": {
+        "host": "localhost",
+        "user": "root",
+        "password": "admin",
+        "database": "automotor"
+    },
+    "server": {
+        "port": 8080
+    }
+}
