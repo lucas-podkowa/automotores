@@ -1,5 +1,5 @@
 // model vehiculo se encargara de conectarse a la base de datos y devolver informacion al controller.
-const conexion = require('./bd_connection');
+const conexion = require('./config_database');
 
 listar_empleados = function (callback) {
     consulta = "select * from empleados";

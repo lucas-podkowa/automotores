@@ -22,7 +22,7 @@ app.get('/personas', personas_x_reserva);
 // ----------------------------------------------------------
 
 function listar(req, res) {
-    model.listar(function (err, resultado) {
+    model.listar((err, resultado) => {
         if (err) {
             res.status(500).send(err);
         } else {

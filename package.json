@@ -2,9 +2,9 @@
   "name": "automotores",
   "version": "0.0.1",
   "description": "sistema de reserva de vehiculos para una institucion",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "node --watch index.js"
+    "dev": "node --watch app.js"
   },
   "repository": {
     "type": "git",

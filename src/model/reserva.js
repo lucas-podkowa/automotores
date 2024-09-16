@@ -1,5 +1,4 @@
-// model vehiculo se encargara de conectarse a la base de datos y devolver informacion al controller.
-const conexion = require('./bd_connection');
+const conexion = require('./config_database');
 metodos = {}
 
 metodos.listar_reservas = function (callback) {
@@ -55,3 +54,6 @@ metodos.buscarPorId = function (reserva_id, callback) {
         return callback(null, { message: `Reserva encontrada`, detail: result[0] });
     });
 }
+
+module.exports = metodos;
+// model vehiculo se encargara de conectarse a la base de datos y devolver informacion al controller.

@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const misConfiguraciones = require("./../config/config.json");
+const misConfiguraciones = require("../config/config.json");
 
 const db = mysql.createConnection(misConfiguraciones.database);
 

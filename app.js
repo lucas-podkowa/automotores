@@ -8,12 +8,12 @@ app.use(express.urlencoded({ extended: true }));
 //conocer los distintos controladores, saber donde estan, traelos como constantes locales
 const vehiculoController = require('./src/controller/vehiculo');
 //const empleadoController = require('./src/controller/empleado');
-//const reservaController = require('./src/controller/reserva');
+const reservaController = require('./src/controller/reserva');
 
 //redireccionar las distintas peticiones a su correspondiente controlador.
 app.use("/vehiculo", vehiculoController); //ejemplo de peticion --> https://localhost:8080/vehiculo/listar
-//app.use('/empleado', empleadoController);
-//app.use('/reserva', reservaController);
+// app.use('/empleado', empleadoController);
+ app.use('/reserva', reservaController);
 
 
 // funcion que intenta iniciar el servidor en el puerto especificado o en el siguiente disponible
