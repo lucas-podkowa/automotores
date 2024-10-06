@@ -1,4 +1,4 @@
-const db = require('./config_database');
+const db = require('../config/config_database');
 metodos = {}
 
 /*

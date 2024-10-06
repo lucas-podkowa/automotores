@@ -1,4 +1,4 @@
-const conexion = require('./config_database');
+const db = require('../config/config_database');
 metodos = {}
 
 metodos.listar_reservas = function (callback) {
@@ -9,7 +9,7 @@ metodos.listar_reservas = function (callback) {
     JOIN vehiculo ON reserva.con_que_va = vehiculo.vehiculo_id
     `;
 
-    conexion.query(consulta, function (err, result) {
+    db.query(consulta, function (err, result) {
 
         // de la base de datos tengo dos posibles resultados, si salio todo bien o si salio todo mal
         //      |--> si salio todo bien esos datos quedan en "result"
@@ -28,7 +28,7 @@ metodos.crear_reserva = function (datos, callback) {
     let params = [datos.lugar, datos.evento, datos.empleado_id, datos.vehiculo_id];
     consulta = "INSERT INTO reserva (lugar, evento, quien_va, con_que_va) VALUES (?,?,?,?);";
 
-    conexion.query(consulta, params, (err, result) => {
+    db.query(consulta, params, (err, result) => {
         if (err) {
             //si hay un error en la consulta debemos responder con ese error de la base de datos al controlador
             if (err.code == "ER_DUP_ENTRY") {
@@ -46,7 +46,7 @@ metodos.crear_reserva = function (datos, callback) {
 
 metodos.buscarPorId = function (reserva_id, callback) {
     var consulta = 'SELECT * FROM reserva WHERE reserva_id = ?';
-    conexion.query(consulta, reserva_id, function (err, result) {
+    db.query(consulta, reserva_id, function (err, result) {
         if (err) {
             return callback(err);
         }

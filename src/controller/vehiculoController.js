@@ -77,4 +77,18 @@ function eliminar_vehiculo(req, res) {
 }
 
 
+
+
+/*
+el problema es la programacion asincrona, tenemos tres formas de encararla
+1. utilizando callback   funcion1(funcion2(parametros)){ funcion2(parametros) }  //la descartaremos
+
+2. utilizando Promises   creo una promesa --> espero la resoluncion de dicha promesa
+
+3. utilizando async/await --> async funcion(parametros) { await el resutando de otra funcion }
+*/
+
+
+
+
 module.exports = router;
