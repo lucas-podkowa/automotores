@@ -7,24 +7,11 @@ const Usuario = {
         //const hashedPass = await bcrypt.hash(pass, 10); // Hasheamos la contraseña
         const query = 'INSERT INTO usuario (mail, pass, persona_id) VALUES (?, ?, ?)';
         try {
-            await db.execute(query, [mail, pass, persona_id]);
+            return await db.execute(query, [mail, pass, persona_id]);
         } catch (error) {
             throw new Error('Error al crear el usuario: ' + error.message);
         }
     },
-
-    // findAll : function (funCallback) {
-    //     var consulta = 'select * from usuario';
-    //     db.query(consulta, function (err, rows) {
-    //         if (err) {
-    //             funCallback(err);
-    //             return;
-    //         } else {
-    //             funCallback(undefined, rows);
-    //         }
-    //     });
-    // },
-
 
     findAll: async () => {
         const query = 'SELECT * FROM usuario';
@@ -35,6 +22,31 @@ const Usuario = {
             throw new Error('Error al obtener los usuarios: ' + error.message);
         }
     },
+
+
+    //busqueda por mail utilizando callbacks
+    findByMail: async (mail) => {
+
+        try {
+            const consulta = `SELECT 
+            p.nombre,
+            p.apellido,
+            u.mail,
+            u.pass
+            FROM usuario u INNER JOIN persona p ON u.persona_id = p.dni AND u.mail = ?`;
+            const [result] = await db.execute(consulta, [mail]);
+
+            if (result.length > 0) {
+                return result;
+            } else {
+                return new Error('Usuario no encontrado');
+            }
+        } catch (error) {
+            throw new Error('Error en la base de datos' + error.message);
+        }
+    },
+
+
 
     findById: async (id) => {
         const query = 'SELECT * FROM usuario WHERE usuario_id = ?';

@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+const router = express.Router();
 
 var model = require('./../model/reserva');
 
@@ -9,68 +8,65 @@ var model = require('./../model/reserva');
 // ---------------------------------------------------------- 
 // -- rutas de escucha (endpoint) dispoibles para RESERVAS -- 
 // ---------------------------------------------------------- 
-app.get('/', listar);
-app.post('/', crear);
-app.put('/:reserva_id', actualizar);
-app.put('/cancelar/:reserva_id', cancelar);
-app.put('/finalizar/:reserva_id', finalizar);
-app.get('/buscar/:reserva_id', buscarPorId);
-app.get('/personas', personas_x_reserva);
+router.get('/', listar);
+router.post('/', crear);
+router.put('/:reserva_id', actualizar);
+router.put('/cancelar/:reserva_id', cancelar);
+router.put('/finalizar/:reserva_id', finalizar);
+router.get('/buscar/:reserva_id', buscarPorId);
+router.get('/personas', personas_x_reserva);
 
 // ----------------------------------------------------------
 // --------- funciones utilizadas por el router ------------- 
 // ----------------------------------------------------------
 
-function listar(req, res) {
-    model.listar((err, resultado) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.json(resultado);
-        }
-    });
+async function listar(req, res) {
+    try {
+        const reservas = await model.listar();
+        res.status(200).json(reservas);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 }
 
 
-function crear(req, res) {
-    model.crearReserva(req.body, (err, resultado) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.send(resultado);
-        }
-    });
+async function crear(req, res) {
+    try {
+        const nueva_reserva = await model.crearReserva(req.body);
+        res.status(201).json(nueva_reserva);
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
 }
 
-function cancelar(req, res) {
-    let reserva_id = req.params.reserva_id;
+async function cancelar(req, res) {
 
-    model.cancelarReserva(reserva_id, (err, result) => {
-        if (err) {
-            res.status(500).send(err);
+    try {
+        let reserva_id = req.params.reserva_id;
+        const result = await model.cancelarReserva(reserva_id);
+        if (result.detail.affectedRows == 0) {
+            res.status(404).send(result.message);
         } else {
-            if (result.detail.affectedRows == 0) {
-                res.status(404).send(result.message);
-            } else {
-                res.send(result);
-            }
+            res.send(result);
         }
-    });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
-function finalizar(req, res) {
-    let reserva_id = req.params.reserva_id;
-    model.finalizarReserva(reserva_id, (err, result) => {
-        if (err) {
-            res.status(500).send(err);
+async function finalizar(req, res) {
+    try {
+        let reserva_id = req.params.reserva_id;
+        const result = await model.finalizarReserva(reserva_id);
+
+        if (result.detail.affectedRows == 0) {
+            res.status(404).send(result.message);
         } else {
-            if (result.detail.affectedRows == 0) {
-                res.status(404).send(result.message);
-            } else {
-                res.send(result);
-            }
+            res.send(result);
         }
-    });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }
 
 function actualizar(req, res) {
@@ -90,14 +86,13 @@ function actualizar(req, res) {
 }
 
 
-function buscarPorId(req, res) {
-    model.buscarPorId(req.params.reserva_id, (err, result) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.send(result);
-        }
-    });
+async function buscarPorId(req, res) {
+    try {
+        const result = await model.buscarPorId(req.params.reserva_id);
+        res.send(result);
+    } catch (error) {
+        res.status(500).send(err);
+    }
 }
 
 

@@ -62,6 +62,30 @@ HABLANDO YERBAS SOBRE TRABAJOS O LABORES DE UN DESARROLLADOR
 // es decir, aplicaciones que tienen un frontEnd para interactuar y un BackEnd para responder a ese Front
 // UX / UI
 
+
+/*
+requisito
+1. Encriptar la clave de usuario
+
+login
+1. poseer un archivo que gestione la seguridad (ej: securityController.js) que contenga la funcion login
+2. viene una peticion desde el front y debe pegar en algun endpoint de /login   
+    2.1. en el req.body llegara el "mail" y el "pass" desde el formulario de login
+    2.2. debo consultar si existe ese usuario en la base de datos por lo que debo hacer una consulta (ej: findByEmail)
+        2.2.1 si no existe el usuario: devuelvo un mensaje de error avisando que el usuario no existe
+        2.2.2 si existe: debo verificar si su clave es correcta, como la clave de la bd esta encriptada, utilizo "bcrypt.compareSync"
+            2.2.2.1 si no es la misma clave: devuelvo un mensaje de error con clave incorrecta
+            2.2.2.2 si es la misma: debo generar un token con "jwt.sign"
+
+3. para pegar contra ese login debo generar en app.js un ruteador hacia al controlador securityController
+*/
+
+
+router.post('/login', login);
+
+function login(req, res) {
+
+}
                 
    
 

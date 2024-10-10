@@ -23,25 +23,28 @@ metodos.listar_reservas = function (callback) {
         }
     })
 }
-metodos.crear_reserva = function (datos, callback) {
+metodos.crear_reserva = async function (datos) {
     //let reserva = datos.datos;
-    let params = [datos.lugar, datos.evento, datos.empleado_id, datos.vehiculo_id];
-    consulta = "INSERT INTO reserva (lugar, evento, quien_va, con_que_va) VALUES (?,?,?,?);";
 
-    db.query(consulta, params, (err, result) => {
-        if (err) {
-            //si hay un error en la consulta debemos responder con ese error de la base de datos al controlador
-            if (err.code == "ER_DUP_ENTRY") {
-                callback({ message: "Datos Duplicados", detail: err });
-            } else {
-                callback({ message: err.message, detail: err });
-            }
+    try {
+        let params = [datos.lugar, datos.evento, datos.empleado_id, datos.vehiculo_id];
+        consulta = "INSERT INTO reserva (lugar, evento, quien_va, con_que_va) VALUES (?,?,?,?);";
+
+        const result = await db.execute(consulta, [params]);
+
+        return { message: 'Exito al crear reserva', detalle: result };
+    } catch (error) {
+        if (error.code == "ER_DUP_ENTRY") {
+
+            return ({ message: "Datos Duplicados", detail: err });
         } else {
-            // si todo sale bien debemos responder el error como nulo y "result" como mensaje de exito
-            callback(null, { message: 'Exito al crear reserva', detalle: result });
+            return ({ message: err.message, detail: err });
         }
+    }
 
-    });
+
+
+
 }
 
 metodos.buscarPorId = function (reserva_id, callback) {

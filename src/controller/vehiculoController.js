@@ -19,24 +19,25 @@ router.delete('/:vehiculo_id', eliminar_vehiculo);
 // -- funciones utilizadas por el router  ----------------------- 
 // --------------------------------------------------------------
 
-function listar_vehiculo(req, res) {
-    model.listar_vehiculo((err, resultado) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.json(resultado);
-        }
-    });
+async function listar_vehiculo(req, res) {
+    try {
+        const vehiculos = await model.listar_vehiculo();
+        res.json(vehiculos);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 }
 
-function buscarPorID(req, res) {
-    model.buscarPorID(req.params.vehiculo_id, (err, result) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.send(result);
+async function buscarPorID(req, res) {
+    try {
+        const vehiculo = await model.buscarPorID(req.params.vehiculo_id);
+        if (!vehiculo) {
+            return res.status(404).send('El vehiculo no fue encontrado.');
         }
-    });
+        res.json(vehiculo);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
 }
 
 

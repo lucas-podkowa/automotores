@@ -10,11 +10,13 @@ const personaController = require('./src/controller/personaController');
 const usuarioController = require('./src/controller/usuarioController');
 const reservaController = require('./src/controller/reservaController');
 const vehiculoController = require('./src/controller/vehiculoController');
+const securityController = require('./src/controller/securityController');
 
 //redireccionar las distintas peticiones a su correspondiente controlador.
 app.use("/persona", personaController); //ejemplo de peticion --> https://localhost:8080/persona/listar_personas
 app.use('/usuario', usuarioController);
 app.use('/reserva', reservaController);
+app.use('/security', securityController);
 app.use("/vehiculo", vehiculoController); //ejemplo de peticion --> https://localhost:8080/vehiculo/crear_vehiculo
 
 

@@ -15,15 +15,15 @@ router.delete('/:usuario_id', eliminar_usuario);
 
 // Funciones CRUD
 
-// function listar_usuarios(req, res) {
-//     model.findAll((err, result) => {
-//         if (err) {
-//             res.status(500).send(err);
-//         } else {
-//             res.json(result);
-//         }
-//     });
-// }
+function listar_usuarios(req, res) {
+    model.findAll((err, result) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.json(result);
+        }
+    });
+}
 
 async function listar_usuarios(req, res) {
     try {
@@ -51,8 +51,8 @@ async function buscarPorID(req, res) {
 async function crear_usuario(req, res) {
     const { mail, pass, persona_id } = req.body;
     try {
-        await model.create(mail, pass, persona_id);
-        res.status(201).json({ message: 'Usuario creado correctamente' });
+        resultado = await model.create(mail, pass, persona_id);
+        res.status(201).json(resltado);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
