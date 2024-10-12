@@ -54,15 +54,17 @@ async function actualizar_persona(req, res) {
     try {
         await model.update(dni, nombre, apellido);
         res.status(200).json({ message: 'Persona actualizada correctamente' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    } catch (error) {
+        const statusCode = error.statusCode || 500;
+        res.status(statusCode).send(error.message);
     }
 }
 
 async function eliminar_persona(req, res) {
     const { dni } = req.params;
     try {
-        await model.delete(dni);
+        const result = await model.delete(dni);
+
         res.status(200).json({ message: 'Persona eliminada correctamente' });
     } catch (err) {
         res.status(500).json({ error: err.message });

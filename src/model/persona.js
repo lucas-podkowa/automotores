@@ -35,16 +35,31 @@ const Persona = {
     update: async (dni, nombre, apellido) => {
         const query = 'UPDATE PERSONA SET nombre = ?, apellido = ? WHERE dni = ?';
         try {
-            await db.execute(query, [nombre, apellido, dni]);
+            const result = await db.execute(query, [nombre, apellido, dni]);
+            if (result.affectedRows === 0) {
+                const error = new Error(`No se encontro una persona con el DNI: ${dni}`);
+                error.statusCode = 404;
+                throw error;
+            }
+            return { message: "Persona actualizada con exito", detail: result };
         } catch (error) {
             throw new Error('Error al actualizar la persona: ' + error.message);
         }
     },
 
     delete: async (dni) => {
-        const query = 'DELETE FROM PERSONA WHERE dni = ?';
         try {
-            await db.execute(query, [dni]);
+            const query = 'DELETE FROM PERSONA WHERE dni = ?';
+            const result = await db.execute(query, [dni]);
+
+            if (result.affectedRows === 0) {
+                const error = new Error(`No se encontro una persona con el DNI: ${dni}`);
+                error.statusCode = 404;
+                throw error;
+            }
+
+            return { message: "Vehiculo eliminado con exito", detail: result }
+
         } catch (error) {
             throw new Error('Error al eliminar la persona: ' + error.message);
         }

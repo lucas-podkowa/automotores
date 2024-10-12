@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const router = express.Router();
 
 var model = require('./../model/reserva');
@@ -8,9 +7,9 @@ var model = require('./../model/reserva');
 // ---------------------------------------------------------- 
 // -- rutas de escucha (endpoint) dispoibles para RESERVAS -- 
 // ---------------------------------------------------------- 
-router.get('/', listar);
-router.post('/', crear);
-router.put('/:reserva_id', actualizar);
+router.get('/', getAll);
+router.post('/', create);
+router.put('/:reserva_id', update);
 router.put('/cancelar/:reserva_id', cancelar);
 router.put('/finalizar/:reserva_id', finalizar);
 router.get('/buscar/:reserva_id', buscarPorId);
@@ -20,9 +19,9 @@ router.get('/personas', personas_x_reserva);
 // --------- funciones utilizadas por el router ------------- 
 // ----------------------------------------------------------
 
-async function listar(req, res) {
+async function getAll(req, res) {
     try {
-        const reservas = await model.listar();
+        const reservas = await model.getAll();
         res.status(200).json(reservas);
     } catch (error) {
         res.status(500).send(error.message);
@@ -30,14 +29,31 @@ async function listar(req, res) {
 }
 
 
-async function crear(req, res) {
+async function create(req, res) {
     try {
-        const nueva_reserva = await model.crearReserva(req.body);
+        const nueva_reserva = await model.create(req.body);
         res.status(201).json(nueva_reserva);
     } catch (error) {
         res.status(500).send(error.message)
     }
 }
+
+function update(req, res) {
+    let reserva_id = req.params.reserva_id;//para identificarlo dentro de la base de datos
+    let datos_reserva = req.body; //aquellos datos que quiero reemplazar, modificar, etc 
+    model.update(reserva_id, datos_reserva, (err, result) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            if (result.detail.affectedRows == 0) {
+                res.status(404).send(result.message);
+            } else {
+                res.send(result);
+            }
+        }
+    });
+}
+
 
 async function cancelar(req, res) {
 
@@ -69,21 +85,7 @@ async function finalizar(req, res) {
     }
 }
 
-function actualizar(req, res) {
-    let reserva_id = req.params.reserva_id;//para identificarlo dentro de la base de datos
-    let datos_reserva = req.body; //aquellos datos que quiero reemplazar, modificar, etc 
-    model.actualizarReserva(reserva_id, datos_reserva, (err, result) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            if (result.detail.affectedRows == 0) {
-                res.status(404).send(result.message);
-            } else {
-                res.send(result);
-            }
-        }
-    });
-}
+
 
 
 async function buscarPorId(req, res) {
@@ -118,5 +120,5 @@ function personas_x_reserva(req, res) {
 }
 
 
-module.exports = app;
+module.exports = router;
 

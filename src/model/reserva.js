@@ -1,62 +1,60 @@
 const db = require('../config/config_database');
 metodos = {}
 
-metodos.listar_reservas = function (callback) {
-    const consulta = `
-    SELECT reserva.*, empleado.nombre AS empleado_nombre, vehiculo.matricula AS vehiculo_matricula 
-    FROM reserva 
-    JOIN empleado ON reserva.quien_va = empleado.empleado_id
-    JOIN vehiculo ON reserva.con_que_va = vehiculo.vehiculo_id
-    `;
+metodos.getAll = async function () {
+    try {
+        const consulta = `SELECT reserva.*,
+                            concat(persona.nombre, persona.apellido) AS responsable,
+                            concat(veiculo.nombre, '(', vehiculo.matricula, ')') AS vehiculo
+                        FROM reserva
+                            INNER JOIN persona ON reserva.resposable = persona.dni
+                            INNER JOIN vehiculo ON reserva.vehiculo = vehiculo.matricula`;
 
-    db.query(consulta, function (err, result) {
+        const result = await db.execute(consulta);
+        return { message: 'Exito al listar reservas', detail: result }
 
-        // de la base de datos tengo dos posibles resultados, si salio todo bien o si salio todo mal
-        //      |--> si salio todo bien esos datos quedan en "result"
-        //      |--> si salio mal esos datos quedan en "err"
-
-        if (err) {
-            callback({ message: 'Error al listar reservas', detalle: err });
-
-        } else {
-            callback(undefined, { message: 'Exito al listar reservas', detalle: result });
-        }
-    })
+    } catch (error) {
+        throw new Error('Error al listar reservas: ' + error.message);
+    }
 }
-metodos.crear_reserva = async function (datos) {
-    //let reserva = datos.datos;
+
+
+metodos.create = async function (datos) {
 
     try {
-        let params = [datos.lugar, datos.evento, datos.empleado_id, datos.vehiculo_id];
-        consulta = "INSERT INTO reserva (lugar, evento, quien_va, con_que_va) VALUES (?,?,?,?);";
-
-        const result = await db.execute(consulta, [params]);
-
+        const params = [datos.vehiculo, datos.responsable, datos.desde, datos.hasta];
+        const consulta = "INSERT INTO reserva (vehiculo, responsable, desde, hasta) VALUES (?,?,?,?);";
+        const result = await db.execute(consulta, params);
         return { message: 'Exito al crear reserva', detalle: result };
     } catch (error) {
-        if (error.code == "ER_DUP_ENTRY") {
-
-            return ({ message: "Datos Duplicados", detail: err });
+        if (error.code === 'ER_BAD_NULL_ERROR') {
+            throw new Error('La columna no puede ser nula: ' + error.message);
+        } else if (error.code === 'ER_NO_REFERENCED_ROW') {
+            throw new Error(' Falla en la restricción de clave externa.: ' + error.message);
         } else {
-            return ({ message: err.message, detail: err });
+            throw new Error('No se pudo realizar la reserva debido a: ' + error.message);
         }
     }
-
-
-
-
 }
 
-metodos.buscarPorId = function (reserva_id, callback) {
-    var consulta = 'SELECT * FROM reserva WHERE reserva_id = ?';
-    db.query(consulta, reserva_id, function (err, result) {
-        if (err) {
-            return callback(err);
-        }
+metodos.update = async function (reserva_id, datos) {
 
-        return callback(null, { message: `Reserva encontrada`, detail: result[0] });
-    });
+    try {
+        // const params = [datos.vehiculo, datos.responsable, datos.desde, datos.hasta];
+        // const consulta = "INSERT INTO reserva (vehiculo, responsable, desde, hasta) VALUES (?,?,?,?);";
+        // const result = await db.execute(consulta, params);
+        // return { message: 'Exito al crear reserva', detalle: result };
+    } catch (error) {
+        // if (error.code === 'ER_BAD_NULL_ERROR') {
+        //     throw new Error('La columna no puede ser nula: ' + error.message);
+        // } else if (error.code === 'ER_NO_REFERENCED_ROW') {
+        //     throw new Error(' Falla en la restricción de clave externa.: ' + error.message);
+        // } else {
+        //     throw new Error('No se pudo realizar la reserva debido a: ' + error.message);
+        // }
+    }
 }
+
 
 module.exports = metodos;
 // model vehiculo se encargara de conectarse a la base de datos y devolver informacion al controller.

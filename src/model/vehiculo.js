@@ -3,7 +3,6 @@ reserva = {}
 
 
 reserva.listar_vehiculo = async function () {
-
     try {
         consulta = "select * from vehiculo";
         const [vehiculos] = await db.execute(consulta);
@@ -13,86 +12,81 @@ reserva.listar_vehiculo = async function () {
     }
 }
 
-reserva.crear_vehiculo = async function (datos, callback) {
+reserva.crear_vehiculo = async function (datos) {
     try {
         const params = [datos.marca_id, datos.matricula, datos.modelo, datos.nombre, datos.kilometraje];
-        consulta = "INSERT INTO vehiculo (marca_id, matricula, modelo, nombre, kilometraje) VALUES (?,?,?,?, ?);";
-        await db.execute(consulta, [params]);
+        const consulta = "INSERT INTO vehiculo (marca_id, matricula, modelo, nombre, kilometraje) VALUES (?,?,?,?,?);";
+        const result = await db.execute(consulta, params);
+        return { message: `${datos.nombre} ${datos.modelo} creado con exito`, detail: result };
     } catch (error) {
-        if (error.code == "ER_DUP_ENTRY") {
+        if (error.code === 'ER_DUP_ENTRY') {
             throw new Error('El vehiculo ya fue registrado anteriormente: ' + error.message);
+        } else if (error.code === 'ER_BAD_NULL_ERROR') {
+            throw new Error('La columna no puede ser nula: ' + error.message);
+        } else if (error.code === 'ER_NO_REFERENCED_ROW') {
+            throw new Error(' Falla en la restricción de clave externa.: ' + error.message);
         } else {
             throw new Error('No se pudo realizar la insersion debido a: ' + error.message);
         }
     }
 }
 
-reserva.actualizar_vehiculo = function (id, datos, callback) {
-    const consulta = 'UPDATE vehiculo SET matricula = ?, marca_id = ?, nombre = ?, modelo = ?, kilometraje = ? WHERE vehiculo_id = ?';
-    const params = [datos.matricula, datos.marca_id, datos.nombre, datos.modelo, datos.kilometraje, id];
-    db.query(consulta, params, (err, results) => {
-        if (err) {
-            return callback(err, null);
-        }
-        callback(null, results);
+reserva.actualizar_vehiculo = async function (id, datos) {
 
-        //----------------------------------------------------------------
-        /*
-        if (err) {
-            if (err.code == "ER_DUP_ENTRY") { //id duplicado
-                return callback({
-                    message: "Los datos a insertar generan un vehiculo duplicado",
-                    detail: err
-                });
-            } else { //algun otro codigo de error
-                return callback({
-                    message: "error diferente, analizar codigo error",
-                    detail: err
-                });
-            }
-        } else if (result.affectedRows == 0) { //vehiculo a actualizar no encontrado
-            return callback({
-                message: "No existe un vehiculo que coincida con el criterio de busqueda",
-                detail: result
-            });
+    try {
+        const consulta = 'UPDATE vehiculo SET matricula = ?, marca_id = ?, nombre = ?, modelo = ?, kilometraje = ? WHERE matricula = ?';
+        const params = [datos.matricula, datos.marca_id, datos.nombre, datos.modelo, datos.kilometraje, id];
+        const result = await db.execute(consulta, [params]);
+
+        if (result.affectedRows == 0) { //vehiculo a actualizar no encontrado
+            throw new Error("No existe un vehiculo que coincida con el criterio de busqueda");
         } else {
-            respuesta = {
+            return {
                 message: `se modificó con exito el vehiculo  ${datos.matricula}`,
                 detail: result
             }
-            callback(null, respuesta);
         }
-        */
-    });
+    } catch (error) {
+        if (error.code == "ER_DUP_ENTRY") {
+            throw new Error("Los datos a insertar generan un vehiculo duplicado");
+        } else { //algun otro codigo de error
+            throw new Error(`Error diferente, analizar código de error: ${error.code}`);
+        }
+    }
 }
 
-reserva.eliminar_vehiculo = function (vehiculo_id, callback) {
-    const consulta = 'DELETE FROM vehiculo WHERE vehiculo_id = ?';
+reserva.eliminar_vehiculo = async function (matricula) {
+    try {
+        const consulta = 'DELETE FROM vehiculo WHERE matricula = ?';
+        const result = await db.execute(consulta, [matricula]);
 
-    db.query(consulta, vehiculo_id, (err, result) => {
-        if (err) {
-            callback({ message: err.code, detail: err });
+        if (result.affectedRows === 0) {
+            const error = new Error(`No se encontró un vehículo con la matrícula ingresada: ${matricula}`);
+            error.statusCode = 404;
+            throw error;
+        }
+
+        // aca da lo mismo si colocamos en un eslse o no
+        return { message: "Vehículo eliminado con éxito", detail: result };
+
+    } catch (error) {
+        throw new Error('Error al eliminar el vehiculo: ' + error.message);
+    }
+}
+
+reserva.buscarPorMatricula = async function (matricula) {
+    try {
+        const [result] = await db.execute('SELECT * FROM vehiculo WHERE matricula = ?', [matricula]);
+        if (result.length == 0) {
+            throw new Error(`No se encontro un vehiculo con la Matricula: ${matricula}`);
         } else {
-            if (result.affectedRows == 0) {
-                callback(undefined, { message: "no se encontro un vehiculo con el id ingresado", detail: result });
-            } else {
-                callback(undefined, { message: "Vehiculo eliminado con exito", detail: result });
-            }
+            return { message: `Vehiculo hallado con exito`, detail: result[0] };
         }
-    });
+    } catch (error) {
+        throw new Error('Revisar codigo de error: ' + error.message);
+    }
 }
 
-reserva.buscarPorID = function (vehiculo_id, callback) {
-    db.query('SELECT * FROM vehiculo WHERE vehiculo_id = ?', vehiculo_id, (err, result) => {
-        if (err) {
-            callback({ message: "revisar codigo de error", detail: err });
-        } else if (result.length == 0) {
-            callback(null, { message: `no se encontro un vehiculo con el ID: ${vehiculo_id}`, detail: result });
-        } else {
-            callback(null, { message: `Vehiculo hallado con exito`, detail: result[0] });
-        }
-    });
-}
 
 
 module.exports = reserva;
