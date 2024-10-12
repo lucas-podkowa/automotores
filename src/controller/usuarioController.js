@@ -13,7 +13,11 @@ router.post('/', crear_usuario);
 router.put('/:usuario_id', actualizar_usuario);
 router.delete('/:usuario_id', eliminar_usuario);
 
-// Funciones CRUD
+
+
+// -------------------------------------------------------------- 
+// -- funciones utilizadas por el router  ----------------------- 
+// --------------------------------------------------------------
 
 function listar_usuarios(req, res) {
     model.findAll((err, result) => {

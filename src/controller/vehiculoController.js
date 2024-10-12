@@ -69,7 +69,7 @@ async function eliminar_vehiculo(req, res) {
         // si el error viene con us stausCode que le asignamos en el model, la respuesta irá con ese numero
         // sino, el status code por defecto es 500
         const statusCode = error.statusCode || 500;
-        res.status(statusCode).send(err.message);
+        res.status(statusCode).send(error.message);
     }
 }
 

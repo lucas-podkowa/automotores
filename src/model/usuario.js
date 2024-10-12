@@ -4,12 +4,22 @@ const db = require('../config/config_database');
 
 const Usuario = {
     create: async (mail, pass, persona_id) => {
-        //const hashedPass = await bcrypt.hash(pass, 10); // Hasheamos la contraseña
-        const query = 'INSERT INTO usuario (mail, pass, persona_id) VALUES (?, ?, ?)';
+        //const hashedPass = await bcrypt.hash(pass, 10); // Hasheamos la contraseña y reemplazamos pass por hashedPass
         try {
-            return await db.execute(query, [mail, pass, persona_id]);
+            const params = [mail, pass, persona_id];
+            const consulta = 'INSERT INTO usuario (mail, pass, persona_id) VALUES (?, ?, ?)';
+            const result = await db.execute(consulta, params);
+            return { message: `Usuario ${mail} creado con exito`, detail: result };
         } catch (error) {
-            throw new Error('Error al crear el usuario: ' + error.message);
+            if (error.code === 'ER_DUP_ENTRY') {
+                throw new Error('Existe un usuario con los mismos datos: ' + error.message);
+            } else if (error.code === 'ER_BAD_NULL_ERROR') {
+                throw new Error('La columna no puede ser nula: ' + error.message);
+            } else if (error.code === 'ER_NO_REFERENCED_ROW') {
+                throw new Error(' Falla en la restricción de clave externa.: ' + error.message);
+            } else {
+                throw new Error('No se pudo registrar al usuario debido a: ' + error.message);
+            }
         }
     },
 
@@ -28,19 +38,20 @@ const Usuario = {
     findByMail: async (mail) => {
 
         try {
-            const consulta = `SELECT 
-            p.nombre,
-            p.apellido,
-            u.mail,
-            u.pass
-            FROM usuario u INNER JOIN persona p ON u.persona_id = p.dni AND u.mail = ?`;
+            const consulta = `SELECT p.nombre, p.apellido, u.mail, u.pass
+                                FROM usuario u INNER JOIN persona p ON u.persona_id = p.dni AND u.mail = ?`;
             const [result] = await db.execute(consulta, [mail]);
 
-            if (result.length > 0) {
-                return result;
-            } else {
-                return new Error('Usuario no encontrado');
+
+            if (result.length == 0) {
+                const error = new Error(`Usuario no encontrado con el mail : ${mail}`);
+                error.statusCode = 404;
+                throw error;
             }
+
+            //si no saltó el error en el if anterior entoces se devuelve el resultado
+            return result;
+
         } catch (error) {
             throw new Error('Error en la base de datos' + error.message);
         }
