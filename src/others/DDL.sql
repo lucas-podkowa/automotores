@@ -38,4 +38,6 @@ CREATE TABLE RESERVA (
     foreign key (responsable) references persona(dni)
 );
 
+INSERT INTO marca (nombre) VALUES ("Chevrolet"),("Fiat"),("Ford"),("Toyota"),("Volkswagen");
+
 

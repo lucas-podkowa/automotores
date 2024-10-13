@@ -34,8 +34,7 @@ async function login(req, res) {
             });
         }
     } catch (error) {
-        const statusCode = error.statusCode || 500;
-        res.status(statusCode).send(error.message);
+        res.status(500).send({ message: error.message });
     }
 }
 

@@ -44,9 +44,7 @@ const Usuario = {
 
 
             if (result.length == 0) {
-                const error = new Error(`Usuario no encontrado con el mail : ${mail}`);
-                error.statusCode = 404;
-                throw error;
+                throw new Error(`Usuario no encontrado con el mail : ${mail}`);
             }
 
             //si no saltó el error en el if anterior entoces se devuelve el resultado
