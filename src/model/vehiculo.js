@@ -1,7 +1,6 @@
 const db = require('../config/config_database');
 reserva = {}
 
-
 reserva.listar_vehiculo = async function () {
     try {
         consulta = "select * from vehiculo";
@@ -31,7 +30,7 @@ reserva.crear_vehiculo = async function (datos) {
     }
 }
 
-reserva.actualizar_vehiculo = async function (id, datos) {
+reserva.actualizar_vehiculo = async function (id, datos)  {
 
     try {
         const consulta = 'UPDATE vehiculo SET matricula = ?, marca_id = ?, nombre = ?, modelo = ?, kilometraje = ? WHERE matricula = ?';

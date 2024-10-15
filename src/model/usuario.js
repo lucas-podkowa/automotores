@@ -1,12 +1,13 @@
 const db = require('../config/config_database');
-//const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 
 const Usuario = {
     create: async (mail, pass, persona_id) => {
-        //const hashedPass = await bcrypt.hash(pass, 10); // Hasheamos la contraseña y reemplazamos pass por hashedPass
+        const hashedPass = await bcrypt.hash(pass, 10); // Hasheamos la contraseña y reemplazamos pass por hashedPass
+        //let textoHashed = bcrypt.hashSync("texto a encriptar",10);
         try {
-            const params = [mail, pass, persona_id];
+            const params = [mail, hashedPass, persona_id];
             const consulta = 'INSERT INTO usuario (mail, pass, persona_id) VALUES (?, ?, ?)';
             const result = await db.execute(consulta, params);
             return { message: `Usuario ${mail} creado con exito`, detail: result };
@@ -47,14 +48,13 @@ const Usuario = {
                 throw new Error(`Usuario no encontrado con el mail : ${mail}`);
             }
 
-            //si no saltó el error en el if anterior entoces se devuelve el resultado
             return result;
+            //si no saltó el error en el if anterior entoces se devuelve el resultado
 
         } catch (error) {
             throw new Error('Error en la base de datos' + error.message);
         }
     },
-
 
 
     findById: async (id) => {

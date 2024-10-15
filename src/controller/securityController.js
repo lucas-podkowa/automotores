@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 var model = require('./../model/usuario');
-//const jwt = require('jsonwebtoken');
-//const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 
 // -----------------------------------------------------------
@@ -20,14 +20,30 @@ async function login(req, res) {
         const { mail, pass } = req.body;
         const [result] = await model.findByMail(mail);
 
-        if (pass === result.pass) {
+
+        const iguales = bcrypt.compareSync(pass, result.pass);
+
+        if (iguales) {
             let user = {
                 nombre: result.nombre,
                 apellido: result.apellido,
                 mail: result.mail
             }
             //firmar usuario
-            res.json(user);
+            jwt.sign(user, 'ultraMegaSecretPass', { expiresIn: '600s' }, (err, token) => {
+                if (err) {
+                    res.status(500).send({
+                        message: err
+                    });
+                } else {
+                    res.status(200).json(
+                        {
+                            datos: user,
+                            token: token
+                        }
+                    );
+                }
+            })
         } else {
             res.status(403).send({
                 message: 'Contraseña Incorrecta'
@@ -39,6 +55,32 @@ async function login(req, res) {
 }
 
 
+function verificarToken(req, res, next) {
+    if (req.headers["authorization"]) {
+        try {
+
+            const token = req.headers["authorization"]
+            const verified = jwt.verify(token, "ultraMegaSecretPass");
+            if (verified) {
+                next();
+            } else {
+                res.status(403).send({
+                    message: "Token invalido, permiso denegado"
+                });
+            }
+
+        } catch (error) {
+            res.status(403).send({
+                message: "Acceso Denegado"
+            });
+        }
+
+    } else {
+        res.status(403).send({
+            message: "No posee token de autorizacion"
+        });
+    }
+}
 
 
 
