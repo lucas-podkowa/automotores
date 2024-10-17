@@ -52,7 +52,7 @@ const Usuario = {
             //si no saltó el error en el if anterior entoces se devuelve el resultado
 
         } catch (error) {
-            throw new Error('Error en la base de datos' + error.message);
+            throw new Error(error.message);
         }
     },
 

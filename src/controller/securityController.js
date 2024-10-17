@@ -110,8 +110,8 @@ function verificarToken(req, res, next) {
 // }
 
 
-module.exports = router;
-//module.exports = { router, verificarToken };
+//module.exports = router;
+module.exports = { router, verificarToken };
 
 
 
