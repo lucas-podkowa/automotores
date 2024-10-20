@@ -1,8 +1,6 @@
 
 // src: viene del ingles source = fuente de informacion
 
-
-
     MODELS: son aquellos archivos encargados de conectarse con mysql
             sentencias SQL para 
                 listar los vehiculos disponibles
