@@ -1,9 +1,6 @@
 
 // src: viene del ingles source = fuente de informacion
 
-cada vez que alguien en la pantalla de su compu (en su navegador) quiera hacer algo con vehiculos
-que mi sitema se oriente y vaya a la parte de la gestion de dichos vehiculos
-
 
 
     MODELS: son aquellos archivos encargados de conectarse con mysql
