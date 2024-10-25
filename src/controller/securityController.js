@@ -30,7 +30,7 @@ async function login(req, res) {
                 mail: result.mail
             }
             //firmar usuario
-            jwt.sign(user, 'ultraMegaSecretPass', { expiresIn: '600s' }, (err, token) => {
+            jwt.sign(user, 'ultraMegaSecretPass', { expiresIn: '10000s' }, (err, token) => {
                 if (err) {
                     res.status(500).send({
                         message: err
@@ -82,6 +82,9 @@ function verificarToken(req, res, next) {
     }
 }
 
+
+// C R U D 
+ 
 
 
 

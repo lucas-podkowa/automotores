@@ -56,7 +56,7 @@ async function actualizar_vehiculo(req, res) {
         let matricula = req.params.matricula;
         const result = await model.actualizar_vehiculo(req.body, matricula);
     } catch (error) {
-        res.status(500).send(err);
+        res.status(500).send(error);
     }
 }
 

@@ -30,11 +30,23 @@ reserva.crear_vehiculo = async function (datos) {
     }
 }
 
-reserva.actualizar_vehiculo = async function (id, datos)  {
+reserva.actualizar_vehiculo = async function (datos, matricula) {
 
     try {
-        const consulta = 'UPDATE vehiculo SET matricula = ?, marca_id = ?, nombre = ?, modelo = ?, kilometraje = ? WHERE matricula = ?';
-        const params = [datos.matricula, datos.marca_id, datos.nombre, datos.modelo, datos.kilometraje, id];
+        const consulta = `UPDATE vehiculo SET 
+        matricula = ?,
+        marca_id = ?,
+        modelo = ?,
+        nombre = ?,
+        kilometraje = ?
+        WHERE matricula = ?`;
+        const params = [
+            datos.matricula,
+            datos.marca_id,
+            datos.modelo,
+            datos.nombre,
+            datos.kilometraje,
+            matricula];
         const result = await db.execute(consulta, [params]);
 
         if (result.affectedRows == 0) { //vehiculo a actualizar no encontrado
