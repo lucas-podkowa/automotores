@@ -11,6 +11,7 @@ const securityController = require('./securityController');
 // ----------------------------------------------------------
 
 router.get('/', securityController.verificarToken, listar_vehiculo);
+router.get('/marcas', securityController.verificarToken, getMarcas);
 router.get('/:matricula', securityController.verificarToken, buscarPorMatricula);
 router.post('/', securityController.verificarToken, crear_vehiculo);
 router.put('/:matricula', securityController.verificarToken, actualizar_vehiculo);
@@ -55,6 +56,8 @@ async function actualizar_vehiculo(req, res) {
     try {
         let matricula = req.params.matricula;
         const result = await model.actualizar_vehiculo(req.body, matricula);
+        //aqui estaba el segundo error, nunca e devolvia nada
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).send(error);
     }
@@ -71,6 +74,15 @@ async function eliminar_vehiculo(req, res) {
         // sino, el status code por defecto es 500
         const statusCode = error.statusCode || 500;
         res.status(statusCode).send(error.message);
+    }
+}
+
+async function getMarcas(req, res) {
+    try {
+        const marcas = await model.getMarcas();
+        res.json(marcas);
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 }
 

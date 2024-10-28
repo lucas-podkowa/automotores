@@ -5,12 +5,12 @@ metodos.getAll = async function () {
     try {
         const consulta = `SELECT reserva.*,
                             concat(persona.nombre, persona.apellido) AS responsable,
-                            concat(veiculo.nombre, '(', vehiculo.matricula, ')') AS vehiculo
+                            concat(vehiculo.nombre, '(', vehiculo.matricula, ')') AS vehiculo
                         FROM reserva
-                            INNER JOIN persona ON reserva.resposable = persona.dni
+                            INNER JOIN persona ON reserva.responsable = persona.dni
                             INNER JOIN vehiculo ON reserva.vehiculo = vehiculo.matricula`;
 
-        const result = await db.execute(consulta);
+        const [result] = await db.execute(consulta);
         return { message: 'Exito al listar reservas', detail: result }
 
     } catch (error) {

@@ -1,8 +1,12 @@
 const express = require('express');
 const config = require('./src/config/config.json');
 const app = express();
+
 var cors = require('cors');
 app.use(cors());
+
+var morgan = require('morgan')
+app.use(morgan('tiny'))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
