@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const model = require('../model/usuario.js');
 
+// ----------------------------------------------------------
+// -- Validaciones personalizada (modo manuial simple) ------
+// ----------------------------------------------------------
+
+const { rulesUser, validate } = require('../middleware/validations.js');
 
 // ----------------------------------------------------------
 // -- Rutas de escucha (endpoint) disponibles para USUARIO --
@@ -9,7 +14,7 @@ const model = require('../model/usuario.js');
 
 router.get('/', listar_usuarios);
 router.get('/:usuario_id', buscarPorID);
-router.post('/', crear_usuario);
+router.post('/', rulesUser(), validate, crear_usuario);
 router.put('/:usuario_id', actualizar_usuario);
 router.delete('/:usuario_id', eliminar_usuario);
 
@@ -53,13 +58,15 @@ async function buscarPorID(req, res) {
 }
 
 async function crear_usuario(req, res) {
-    const { mail, pass, persona_id } = req.body;
-    try {
-        resultado = await model.create(mail, pass, persona_id);
-        res.status(201).json(resltado);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    // const { mail, pass, persona_id } = req.body;
+    // try {
+    //     resultado = await model.create(mail, pass, persona_id);
+    //     res.status(201).json(resltado);
+    // } catch (err) {
+    //     res.status(500).json({ error: err.message });
+    // }
+
+    console.log('paso por aqui y los datos son validos')
 }
 
 async function actualizar_usuario(req, res) {

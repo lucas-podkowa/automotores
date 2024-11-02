@@ -68,7 +68,7 @@ async function eliminar_vehiculo(req, res) {
     try {
         const { matricula } = req.params;
         const result = await model.eliminar_vehiculo(matricula);
-        res.status(204).send(result);
+        res.status(200).send(result);
     } catch (error) {
         // si el error viene con us stausCode que le asignamos en el model, la respuesta irá con ese numero
         // sino, el status code por defecto es 500

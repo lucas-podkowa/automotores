@@ -2,13 +2,15 @@ const model = require('../model/persona');
 const express = require('express');
 const router = express.Router();
 
+const { personaRules, validate } = require('../middleware/validations.js');
+
 // ----------------------------------------------------------
 // -- Rutas de escucha (endpoint) disponibles para PERSONA --
 // ----------------------------------------------------------
 
 router.get('/', listar_personas);
 router.get('/:dni', buscarPorDni);
-router.post('/', crear_persona);
+router.post('/', personaRules(), validate, crear_persona);
 router.put('/:dni', actualizar_persona);
 router.delete('/:dni', eliminar_persona);
 

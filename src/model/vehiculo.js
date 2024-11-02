@@ -79,11 +79,10 @@ const Vehiculo = {
                 throw error;
             }
 
-            // aca da lo mismo si colocamos en un eslse o no
             return { message: "Vehículo eliminado con éxito", detail: result };
 
         } catch (error) {
-            throw new Error('Error al eliminar el vehiculo: ' + error.message);
+            throw error;
         }
     },
 

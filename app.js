@@ -6,7 +6,8 @@ var cors = require('cors');
 app.use(cors());
 
 var morgan = require('morgan')
-app.use(morgan('tiny'))
+app.use(morgan('common'));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
