@@ -74,14 +74,9 @@ async function finalizar(req, res) {
     try {
         let reserva_id = req.params.reserva_id;
         const result = await model.finalizarReserva(reserva_id);
-
-        if (result.detail.affectedRows == 0) {
-            res.status(404).send(result.message);
-        } else {
-            res.send(result);
-        }
+        res.send(result);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(error.conde || 500).send(error);
     }
 }
 

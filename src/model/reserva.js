@@ -5,7 +5,9 @@ metodos.getAll = async function () {
     try {
         const consulta = `SELECT reserva.*,
                             concat(persona.nombre, persona.apellido) AS responsable,
-                            concat(vehiculo.nombre, '(', vehiculo.matricula, ')') AS vehiculo
+                            concat(vehiculo.nombre, '(', vehiculo.matricula, ')') AS vehiculo,
+                            CASE WHEN reserva.finalizada = 1 THEN true ELSE false END AS finalizada,
+                            CASE WHEN reserva.cancelada = 1 THEN true ELSE false END AS cancelada
                         FROM reserva
                             INNER JOIN persona ON reserva.responsable = persona.dni
                             INNER JOIN vehiculo ON reserva.vehiculo = vehiculo.matricula`;
@@ -20,7 +22,6 @@ metodos.getAll = async function () {
 
 
 metodos.create = async function (datos) {
-
     try {
         const params = [datos.vehiculo, datos.responsable, datos.desde, datos.hasta];
         const consulta = "INSERT INTO reserva (vehiculo, responsable, desde, hasta) VALUES (?,?,?,?);";
@@ -53,6 +54,26 @@ metodos.update = async function (reserva_id, datos) {
         //     throw new Error('No se pudo realizar la reserva debido a: ' + error.message);
         // }
     }
+}
+
+metodos.finalizarReserva = async function (reserva_id) {
+    try {
+        const params = [true, reserva_id];
+        const consulta = "UPDATE reserva SET finalizada =? WHERE reserva_id =?;";
+        const [result] = await db.execute(consulta, params);
+
+        if (result.affectedRows === 0) {
+            const error = new Error('Existe una reserva con el id: ' + reserva_id);
+            error.statusCode = 404;
+            throw error;
+        }
+        return { message: 'Reserva finalizada', detail: result }
+    } catch (error) {
+        throw error;
+    }
+
+
+
 }
 
 
