@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 
 
 const Usuario = {
+
+    //registrarse como usuario
     create: async (mail, pass, persona_id) => {
         const hashedPass = await bcrypt.hash(pass, 10); // Hasheamos la contraseña y reemplazamos pass por hashedPass
         //let textoHashed = bcrypt.hashSync("texto a encriptar",10);
@@ -35,22 +37,16 @@ const Usuario = {
     },
 
 
-    //busqueda por mail utilizando callbacks
+    //un metodo que utiliza la funcion del login para saber si existe ese usuario o no
     findByMail: async (mail) => {
-
         try {
             const consulta = `SELECT p.nombre, p.apellido, u.mail, u.pass
                                 FROM usuario u INNER JOIN persona p ON u.persona_id = p.dni AND u.mail = ?`;
             const [result] = await db.execute(consulta, [mail]);
-
-
             if (result.length == 0) {
                 throw new Error(`Usuario no encontrado con el mail : ${mail}`);
             }
-
-            return result;
-            //si no saltó el error en el if anterior entoces se devuelve el resultado
-
+            return result; //si no saltó el error en el if anterior entoces se devuelve el resultado
         } catch (error) {
             throw new Error(error.message);
         }

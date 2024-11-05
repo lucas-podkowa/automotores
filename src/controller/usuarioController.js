@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const model = require('../model/usuario.js');
-
-// ----------------------------------------------------------
-// -- Validaciones personalizada (modo manuial simple) ------
-// ----------------------------------------------------------
-
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const { rulesUser, validate } = require('../middleware/validations.js');
 
 // ----------------------------------------------------------
@@ -17,7 +14,7 @@ router.get('/:usuario_id', buscarPorID);
 router.post('/', rulesUser(), validate, crear_usuario);
 router.put('/:usuario_id', actualizar_usuario);
 router.delete('/:usuario_id', eliminar_usuario);
-
+router.post('/login', login);
 
 
 // -------------------------------------------------------------- 
@@ -47,26 +44,26 @@ async function listar_usuarios(req, res) {
 async function buscarPorID(req, res) {
     const { usuario_id } = req.params;
     try {
-        const results = await model.findById(usuario_id);
-        if (results.length === 0) {
+        const result = await model.findById(usuario_id);
+        if (result.length === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        res.status(200).json(results[0]);
+        res.status(200).json(result[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 }
 
 async function crear_usuario(req, res) {
-    // const { mail, pass, persona_id } = req.body;
-    // try {
-    //     resultado = await model.create(mail, pass, persona_id);
-    //     res.status(201).json(resltado);
-    // } catch (err) {
-    //     res.status(500).json({ error: err.message });
-    // }
+    const { mail, pass, persona_id } = req.body;
+    try {
+        const result = await model.create(mail, pass, persona_id);
+        res.status(201).json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 
-    console.log('paso por aqui y los datos son validos')
+    // console.log('paso por aqui y los datos son validos')
 }
 
 async function actualizar_usuario(req, res) {
@@ -87,6 +84,32 @@ async function eliminar_usuario(req, res) {
         res.status(200).json({ message: 'Usuario eliminado correctamente' });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+}
+
+async function login(req, res) {
+    try {
+        const { mail, pass } = req.body;
+        const [result] = await model.findByMail(mail);
+        const iguales = bcrypt.compareSync(pass, result.pass);
+        if (iguales) {
+            let user = {
+                nombre: result.nombre,
+                apellido: result.apellido,
+                mail: result.mail
+            }
+            jwt.sign(user, 'ultraMegaSecretPass', { expiresIn: '10000s' }, (err, token) => {
+                if (err) {
+                    res.status(500).send({ message: err });
+                } else {
+                    res.status(200).json({ datos: user, token: token });
+                }
+            })
+        } else {
+            res.status(403).send({ message: 'Contraseña Incorrecta' });
+        }
+    } catch (error) {
+        res.status(500).send({ message: error.message });
     }
 }
 

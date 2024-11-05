@@ -17,6 +17,13 @@ const Vehiculo = {
             const params = [datos.marca_id, datos.matricula, datos.modelo, datos.nombre, datos.kilometraje];
             const consulta = "INSERT INTO vehiculo (marca_id, matricula, modelo, nombre, kilometraje) VALUES (?,?,?,?,?);";
             const result = await db.execute(consulta, params);
+
+            // Inserta las imágenes del vehículo
+            const consultaImagen = "INSERT INTO imagenes_vehiculo (matricula, url) VALUES (?, ?);";
+            for (const imagen of datos.imagenes) {
+                await db.execute(consultaImagen, [datos.matricula, imagen]);
+            }
+
             return { message: `${datos.nombre} ${datos.modelo} creado con exito`, detail: result };
         } catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {

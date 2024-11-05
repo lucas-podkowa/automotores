@@ -2,6 +2,7 @@ CREATE TABLE PERSONA (
 	dni varchar(8) PRIMARY KEY,
     nombre varchar(50) NOT NULL,
     apellido varchar(50) NOT NULL
+
 );
 
 CREATE TABLE USUARIO (
@@ -9,6 +10,7 @@ CREATE TABLE USUARIO (
     mail varchar(50) UNIQUE NOT NULL,
     pass varchar(255) NOT NULL,
     persona_id varchar(8) NOT NULL,
+    rol enum('Administrador, Cliente') NOT NULL,
     foreign key (persona_id) references persona(dni)
 );
 
@@ -24,6 +26,12 @@ CREATE TABLE VEHICULO (
     kilometraje int ,
     marca_id smallint NOT NULL,
     foreign key (marca_id) references marca(marca_id)
+);
+CREATE TABLE IMAGENES_VEHICULO (
+    imagen_id INT AUTO_INCREMENT PRIMARY KEY,
+    matricula VARCHAR(7),
+    url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (matricula) REFERENCES vehiculo(matricula) ON DELETE CASCADE
 );
 
 CREATE TABLE RESERVA (

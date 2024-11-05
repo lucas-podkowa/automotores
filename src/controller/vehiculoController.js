@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const model = require('./../model/vehiculo.js');
-const securityController = require('./securityController');
+const verificarToken = require('./../middleware/verificarToken.js');
 /*
     index nos delega una peticion HTTP (una URL con sus partes)
     llega desde afuera en un Request (req) y le envio un Response (res)
@@ -10,12 +10,12 @@ const securityController = require('./securityController');
 // -- rutas de escucha (endpoint) dispoibles para VEHICULOS--
 // ----------------------------------------------------------
 
-router.get('/', securityController.verificarToken, listar_vehiculo);
-router.get('/marcas', securityController.verificarToken, getMarcas);
-router.get('/:matricula', securityController.verificarToken, buscarPorMatricula);
-router.post('/', securityController.verificarToken, crear_vehiculo);
-router.put('/:matricula', securityController.verificarToken, actualizar_vehiculo);
-router.delete('/:matricula', securityController.verificarToken, eliminar_vehiculo);
+router.get('/', verificarToken, listar_vehiculo);
+router.get('/marcas', verificarToken, getMarcas);
+router.get('/:matricula', verificarToken, buscarPorMatricula);
+router.post('/', verificarToken, crear_vehiculo);
+router.put('/:matricula', verificarToken, actualizar_vehiculo);
+router.delete('/:matricula', verificarToken, eliminar_vehiculo);
 
 // -------------------------------------------------------------- 
 // -- funciones utilizadas por el router  ----------------------- 
