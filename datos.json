@@ -1,7 +1,3 @@
 {
-    "marca": "Toyota",
-    "modelo": "Corolla",
-    "anio": 2020,
-    "color": "Rojo",
-    "precio": 20000
+    "marca": "Toyota"
 }
